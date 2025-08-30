@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aşk Patlaması 💖</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  #heart {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    clip-path: polygon(50% 0%, 61% 12%, 75% 15%, 85% 25%, 90% 40%, 85% 55%, 75% 65%, 50% 100%, 25% 65%, 15% 55%, 10% 40%, 15% 25%, 25% 15%, 39% 12%);
+    cursor: pointer;
+    animation: pulse 1s infinite;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  .heart-small {
+    width: 20px;
+    height: 20px;
+    background-color: pink;
+    clip-path: polygon(50% 0%, 61% 12%, 75% 15%, 85% 25%, 90% 40%, 85% 55%, 75% 65%, 50% 100%, 25% 65%, 15% 55%, 10% 40%, 15% 25%, 25% 15%, 39% 12%);
+    position: absolute;
+    opacity: 0;
+  }
+
+  #name {
+    position: absolute;
+    color: #ff007f;
+    font-size: 3em;
+    font-weight: bold;
+    text-shadow: 0 0 20px #ff007f, 0 0 40px #ff69b4;
+    opacity: 0;
+    z-index: 3;
+  }
+
+  #message {
+    position: absolute;
+    bottom: 50px;
+    color: #fff;
+    font-size: 1.5em;
+    opacity: 0;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="heart"></div>
+<div id="name">Nisa</div>
+<div id="message">Sonsuza kadar sen 💖</div>
+
+<script>
+  const heart = document.getElementById('heart');
+  const name = document.getElementById('name');
+  const message = document.getElementById('message');
+
+  heart.addEventListener('click', () => {
+    heart.style.display = 'none';
+    createHearts(100);
+    showText();
+  });
+
+  function createHearts(num) {
+    for(let i=0; i<num; i++) {
+      const h = document.createElement('div');
+      h.classList.add('heart-small');
+      h.style.left = Math.random() * window.innerWidth + 'px';
+      h.style.top = Math.random() * window.innerHeight + 'px';
+      document.body.appendChild(h);
+      animateHeart(h);
+    }
+  }
+
+  function animateHeart(el) {
+    let x = parseFloat(el.style.left);
+    let y = parseFloat(el.style.top);
+    el.style.opacity = 1;
+    const dx = (Math.random() - 0.5) * 5;
+    const dy = - (Math.random() * 5 + 2);
+    const interval = setInterval(() => {
+      y += dy;
+      x += dx;
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.opacity -= 0.01;
+      if(el.style.opacity <= 0){
+        el.remove();
+        clearInterval(interval);
+      }
+    }, 16);
+  }
+
+  function showText() {
+    name.style.opacity = 1;
+    message.style.opacity = 1;
+  }
+</script>
+
+</body>
+</html>
