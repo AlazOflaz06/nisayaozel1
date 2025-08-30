@@ -3,27 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mükemmel Romantik Site</title>
+<title>Nisa - Romantik Efektler</title>
 <style>
-/* Body ve arka plan */
 body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
   background: linear-gradient(to bottom, #001f4d, #001030);
   cursor: pointer;
-  position: relative;
   font-family: 'Segoe UI', sans-serif;
+  position: relative;
 }
 
-/* Ortadaki yazı */
+/* Ortadaki Nisa yazısı */
 #name {
   position: absolute;
-  top: 40%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: #ff007f;
-  font-size: 3em;
+  font-size: 4em;
   font-weight: bold;
   text-shadow: 0 0 20px #ff007f, 0 0 40px #ff69b4, 0 0 60px #ffb6c1;
   z-index: 3;
@@ -34,9 +33,8 @@ body {
   position: absolute;
   width: 20px;
   height: 20px;
-  z-index: 1;
+  z-index: 2;
 }
-
 .heart svg {
   width: 100%;
   height: 100%;
@@ -53,11 +51,20 @@ body {
   opacity: 0.8;
   animation: twinkle 2s infinite alternate;
 }
-
 @keyframes twinkle {
   0% { opacity: 0.3; transform: scale(0.5); }
   50% { opacity: 1; transform: scale(1.2); }
   100% { opacity: 0.3; transform: scale(0.5); }
+}
+
+/* Konfeti */
+.confetti {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  opacity: 0.9;
+  z-index: 2;
 }
 </style>
 </head>
@@ -66,8 +73,8 @@ body {
 <div id="name">Nisa</div>
 
 <script>
-// Renkler
-const colors = ['#000000','#800000','#000080'];
+// Renk paleti
+const colors = ['#000000','#800000','#000080','#ff1493','#00ffff','#ff69b4','#ff4500'];
 const body = document.body;
 
 // Kalp oluşturma fonksiyonu
@@ -79,12 +86,10 @@ function createHeart(x, y, color, size) {
   heart.style.color = color;
   heart.style.width = size + 'px';
   heart.style.height = size + 'px';
-  heart.innerHTML = `
-    <svg viewBox="0 0 32 29.6">
-      <path d="M23.6,0c-2.9,0-5.4,1.7-6.6,4.1C15.8,1.7,13.3,0,10.4,0C4.7,0,0,4.7,0,10.4c0,11.2,16,19.2,16,19.2s16-8,16-19.2
-      C32,4.7,27.3,0,23.6,0z"/>
-    </svg>
-  `;
+  heart.innerHTML = `<svg viewBox="0 0 32 29.6">
+    <path d="M23.6,0c-2.9,0-5.4,1.7-6.6,4.1C15.8,1.7,13.3,0,10.4,0C4.7,0,0,4.7,0,10.4c0,11.2,16,19.2,16,19.2s16-8,16-19.2
+    C32,4.7,27.3,0,23.6,0z"/>
+  </svg>`;
   body.appendChild(heart);
   return heart;
 }
@@ -95,14 +100,9 @@ function animateHeart(heart, vx, vy, rotationSpeed, duration) {
   const animate = (timestamp) => {
     if (!start) start = timestamp;
     let progress = timestamp - start;
-    if (progress > duration) {
-      heart.remove();
-      return;
-    }
-    const x = parseFloat(heart.style.left) + vx;
-    const y = parseFloat(heart.style.top) + vy;
-    heart.style.left = x + 'px';
-    heart.style.top = y + 'px';
+    if (progress > duration) { heart.remove(); return; }
+    heart.style.left = parseFloat(heart.style.left) + vx + 'px';
+    heart.style.top = parseFloat(heart.style.top) + vy + 'px';
     heart.style.transform = `rotate(${rotationSpeed*progress/10}deg)`;
     requestAnimationFrame(animate);
   };
@@ -123,12 +123,12 @@ function createStar() {
 // 50 yıldız
 for(let i=0;i<50;i++) createStar();
 
-// Aşağı süzülen kalpler
+// Süzen kalpler (Nisa çevresinde)
 function createFallingHearts(num) {
   for (let i = 0; i < num; i++) {
     const x = Math.random() * window.innerWidth;
     const y = Math.random() * window.innerHeight;
-    const size = Math.random() * 15 + 10;
+    const size = Math.random()*15 + 10;
     const color = colors[Math.floor(Math.random()*colors.length)];
     const heart = createHeart(x, y, color, size);
     const vx = (Math.random()-0.5)*0.5;
@@ -136,14 +136,14 @@ function createFallingHearts(num) {
     animateHeart(heart, vx, vy, (Math.random()-0.5)*2, 15000);
   }
 }
-
-// 70 süzülen kalp
 createFallingHearts(70);
 
-// Tıklama ile patlayan kalpler
+// Tıklama ile Nisa çevresinde patlayan kalpler ve konfeti
 body.addEventListener('click', (e) => {
   const clickX = e.clientX;
   const clickY = e.clientY;
+  
+  // Patlayan kalpler
   for (let i = 0; i < 30; i++) {
     const color = colors[Math.floor(Math.random()*colors.length)];
     const size = Math.random()*15 + 10;
@@ -151,6 +151,19 @@ body.addEventListener('click', (e) => {
     const vx = (Math.random()-0.5)*2;
     const vy = - (Math.random()*3 + 2);
     animateHeart(heart, vx, vy, (Math.random()-0.5)*5, 3000 + Math.random()*1000);
+  }
+  
+  // Konfeti patlaması
+  for (let i = 0; i < 20; i++) {
+    const conf = document.createElement('div');
+    conf.className = 'confetti';
+    conf.style.left = clickX + 'px';
+    conf.style.top = clickY + 'px';
+    conf.style.background = colors[Math.floor(Math.random()*colors.length)];
+    body.appendChild(conf);
+    const vx = (Math.random()-0.5)*4;
+    const vy = (Math.random()-0.5)*4;
+    animateHeart(conf, vx, vy, (Math.random()-0.5)*10, 2000 + Math.random()*1000);
   }
 });
 </script>
