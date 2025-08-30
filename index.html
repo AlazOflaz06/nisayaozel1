@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Romantik Kalp Patlaması</title>
+<title>Mükemmel Romantik Site</title>
 <style>
+/* Body ve arka plan */
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(to bottom, #001f4d, #001030);
   overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
-  position: relative;
+  background: linear-gradient(to bottom, #001f4d, #001030);
   cursor: pointer;
+  position: relative;
+  font-family: 'Segoe UI', sans-serif;
 }
 
+/* Ortadaki yazı */
 #name {
   position: absolute;
   top: 40%;
@@ -23,10 +25,11 @@ body {
   color: #ff007f;
   font-size: 3em;
   font-weight: bold;
-  text-shadow: 0 0 20px #ff007f, 0 0 40px #ff69b4;
+  text-shadow: 0 0 20px #ff007f, 0 0 40px #ff69b4, 0 0 60px #ffb6c1;
   z-index: 3;
 }
 
+/* Kalpler */
 .heart {
   position: absolute;
   width: 20px;
@@ -39,6 +42,23 @@ body {
   height: 100%;
   fill: currentColor;
 }
+
+/* Yıldızlar */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.3; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0.3; transform: scale(0.5); }
+}
 </style>
 </head>
 <body>
@@ -46,10 +66,11 @@ body {
 <div id="name">Nisa</div>
 
 <script>
+// Renkler
 const colors = ['#000000','#800000','#000080'];
 const body = document.body;
-const name = document.getElementById('name');
 
+// Kalp oluşturma fonksiyonu
 function createHeart(x, y, color, size) {
   const heart = document.createElement('div');
   heart.className = 'heart';
@@ -68,6 +89,7 @@ function createHeart(x, y, color, size) {
   return heart;
 }
 
+// Kalp animasyonu
 function animateHeart(heart, vx, vy, rotationSpeed, duration) {
   let start = null;
   const animate = (timestamp) => {
@@ -87,7 +109,21 @@ function animateHeart(heart, vx, vy, rotationSpeed, duration) {
   requestAnimationFrame(animate);
 }
 
-// Aşağı doğru süzülen kalpler
+// Yıldız oluşturma
+function createStar() {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.left = Math.random() * window.innerWidth + 'px';
+  star.style.top = Math.random() * window.innerHeight + 'px';
+  star.style.width = (Math.random()*2 + 1) + 'px';
+  star.style.height = star.style.width;
+  body.appendChild(star);
+}
+
+// 50 yıldız
+for(let i=0;i<50;i++) createStar();
+
+// Aşağı süzülen kalpler
 function createFallingHearts(num) {
   for (let i = 0; i < num; i++) {
     const x = Math.random() * window.innerWidth;
@@ -101,9 +137,10 @@ function createFallingHearts(num) {
   }
 }
 
-// Başlangıçta süzülen kalpler
+// 70 süzülen kalp
 createFallingHearts(70);
 
+// Tıklama ile patlayan kalpler
 body.addEventListener('click', (e) => {
   const clickX = e.clientX;
   const clickY = e.clientY;
@@ -111,8 +148,8 @@ body.addEventListener('click', (e) => {
     const color = colors[Math.floor(Math.random()*colors.length)];
     const size = Math.random()*15 + 10;
     const heart = createHeart(clickX, clickY, color, size);
-    const vx = (Math.random()-0.5)*2; // sağa sola
-    const vy = - (Math.random()*3 + 2); // yukarı
+    const vx = (Math.random()-0.5)*2;
+    const vy = - (Math.random()*3 + 2);
     animateHeart(heart, vx, vy, (Math.random()-0.5)*5, 3000 + Math.random()*1000);
   }
 });
