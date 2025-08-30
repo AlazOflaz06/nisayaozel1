@@ -40,6 +40,8 @@
     clip-path: polygon(50% 0%, 61% 12%, 75% 15%, 85% 25%, 90% 40%, 85% 55%, 75% 65%, 50% 100%, 25% 65%, 15% 55%, 10% 40%, 15% 25%, 25% 15%, 39% 12%);
     position: absolute;
     opacity: 0;
+    pointer-events: none;
+    z-index: 1;
   }
 
   #name {
@@ -69,50 +71,52 @@
 <div id="message">Sonsuza kadar sen 💖</div>
 
 <script>
-  const heart = document.getElementById('heart');
-  const name = document.getElementById('name');
-  const message = document.getElementById('message');
+const heart = document.getElementById('heart');
+const name = document.getElementById('name');
+const message = document.getElementById('message');
 
-  heart.addEventListener('click', () => {
-    heart.style.display = 'none';
-    createHearts(100);
-    showText();
-  });
+heart.addEventListener('click', () => {
+  heart.style.display = 'none';
+  createHearts(150); // Kalp sayısını artırdım, daha gösterişli olsun
+  showText();
+});
 
-  function createHearts(num) {
-    for(let i=0; i<num; i++) {
-      const h = document.createElement('div');
-      h.classList.add('heart-small');
-      h.style.left = Math.random() * window.innerWidth + 'px';
-      h.style.top = Math.random() * window.innerHeight + 'px';
-      document.body.appendChild(h);
-      animateHeart(h);
+function createHearts(num) {
+  for (let i = 0; i < num; i++) {
+    const h = document.createElement('div');
+    h.classList.add('heart-small');
+    h.style.left = window.innerWidth/2 + 'px';  // Başlangıç ekran ortası
+    h.style.top = window.innerHeight/2 + 'px';
+    document.body.appendChild(h);
+    animateHeart(h);
+  }
+}
+
+function animateHeart(el) {
+  let x = parseFloat(el.style.left);
+  let y = parseFloat(el.style.top);
+  el.style.opacity = 1;
+  const dx = (Math.random() - 0.5) * 10; // x yönü hız
+  const dy = - (Math.random() * 10 + 2); // y yönü hız
+  const interval = setInterval(() => {
+    y += dy;
+    x += dx;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.opacity -= 0.02;
+    if (el.style.opacity <= 0) {
+      el.remove();
+      clearInterval(interval);
     }
-  }
+  }, 16);
+}
 
-  function animateHeart(el) {
-    let x = parseFloat(el.style.left);
-    let y = parseFloat(el.style.top);
-    el.style.opacity = 1;
-    const dx = (Math.random() - 0.5) * 5;
-    const dy = - (Math.random() * 5 + 2);
-    const interval = setInterval(() => {
-      y += dy;
-      x += dx;
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      el.style.opacity -= 0.01;
-      if(el.style.opacity <= 0){
-        el.remove();
-        clearInterval(interval);
-      }
-    }, 16);
-  }
-
-  function showText() {
-    name.style.opacity = 1;
-    message.style.opacity = 1;
-  }
+function showText() {
+  name.style.transition = 'opacity 1s';
+  message.style.transition = 'opacity 1s';
+  name.style.opacity = 1;
+  message.style.opacity = 1;
+}
 </script>
 
 </body>
