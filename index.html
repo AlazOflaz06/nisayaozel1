@@ -8,7 +8,7 @@
 body {
   margin: 0;
   height: 100vh;
-  background-color: #000;
+  background: linear-gradient(to bottom, #001f4d, #001030); /* gece mavisi degrade */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,7 +54,7 @@ body {
   opacity: 0;
   transform: rotate(-45deg);
   pointer-events: none;
-  z-index: 1;
+  z-index: 1; /* yazının arkasında */
 }
 
 #name {
@@ -90,8 +90,13 @@ const message = document.getElementById('message');
 
 heart.addEventListener('click', () => {
   heart.style.display = 'none';
-  createHearts(200); // Daha çok kalp
+  createHearts(200); // toplam kalp sayısı
   showText();
+  // 15 saniyelik animasyon süresi
+  setTimeout(() => {
+    // animasyonu durdurmak veya resetlemek için
+    console.log("15 saniye tamamlandı");
+  }, 15000);
 });
 
 function createHearts(num) {
@@ -99,11 +104,18 @@ function createHearts(num) {
   for (let i = 0; i < num; i++) {
     const h = document.createElement('div');
     h.classList.add('heart-small');
-    h.style.left = (window.innerWidth/2 - 10) + 'px';
-    h.style.top = (window.innerHeight/2 - 10) + 'px';
+    
+    // 42: Ekranın farklı köşelerinden rastgele çıkış
+    h.style.left = Math.random() * window.innerWidth + 'px';
+    h.style.top = Math.random() * window.innerHeight + 'px';
+    
+    // boyut
     h.style.width = (Math.random() * 20 + 10) + 'px';
     h.style.height = (h.style.width.replace('px','')*0.9)+'px';
+    
+    // renk
     h.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+    
     document.body.appendChild(h);
     animateHeart(h);
   }
@@ -113,19 +125,26 @@ function animateHeart(el) {
   let x = parseFloat(el.style.left);
   let y = parseFloat(el.style.top);
   let rotation = Math.random() * 360;
-  const dx = (Math.random() - 0.5) * 12;
-  const dy = - (Math.random() * 12 + 2);
+  
+  // 43: Kalpler farklı hızlarda hareket
+  const dx = (Math.random() - 0.5) * (Math.random()*10+2);
+  const dy = - (Math.random() * 10 + 2); // yukarı hareket
   const dr = (Math.random() - 0.5) * 10;
+  
   el.style.opacity = 1;
   const interval = setInterval(() => {
     y += dy;
     x += dx;
     rotation += dr;
+    
     el.style.left = x + 'px';
     el.style.top = y + 'px';
     el.style.transform = `rotate(${rotation}deg)`;
-    el.style.opacity -= 0.02;
-    if (el.style.opacity <= 0) {
+    
+    // yavaş süzülen kalpler için opacity azaltma
+    el.style.opacity -= 0.015;
+    
+    if (el.style.opacity <= 0 || y < -50 || x < -50 || x > window.innerWidth+50) {
       el.remove();
       clearInterval(interval);
     }
