@@ -3,160 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aşk Patlaması 💖</title>
+<title>Romantik Kalp Patlaması</title>
 <style>
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(to bottom, #001f4d, #001030); /* gece mavisi degrade */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: linear-gradient(to bottom, #001f4d, #001030);
   overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
-}
-
-#heart {
-  width: 100px;
-  height: 90px;
-  background-color: red;
   position: relative;
-  transform: rotate(-45deg);
   cursor: pointer;
-  z-index: 2;
-  animation: pulse 1s infinite;
-}
-
-#heart::before,
-#heart::after {
-  content: "";
-  width: 100px;
-  height: 90px;
-  background-color: red;
-  border-radius: 50%;
-  position: absolute;
-}
-
-#heart::before { top: -50px; left: 0; }
-#heart::after { left: 50px; top: 0; }
-
-@keyframes pulse {
-  0% { transform: rotate(-45deg) scale(1); }
-  50% { transform: rotate(-45deg) scale(1.1); }
-  100% { transform: rotate(-45deg) scale(1); }
-}
-
-.heart-small {
-  width: 20px;
-  height: 18px;
-  border-radius: 50% 50% 0 0;
-  position: absolute;
-  opacity: 0;
-  transform: rotate(-45deg);
-  pointer-events: none;
-  z-index: 1; /* yazının arkasında */
 }
 
 #name {
   position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: #ff007f;
   font-size: 3em;
   font-weight: bold;
   text-shadow: 0 0 20px #ff007f, 0 0 40px #ff69b4;
-  opacity: 0;
   z-index: 3;
 }
 
-#message {
+.heart {
   position: absolute;
-  bottom: 50px;
-  color: #fff;
-  font-size: 1.5em;
-  opacity: 0;
-  text-align: center;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+}
+
+.heart svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
 }
 </style>
 </head>
 <body>
 
-<div id="heart"></div>
 <div id="name">Nisa</div>
-<div id="message">Sonsuza kadar sen 💖</div>
 
 <script>
-const heart = document.getElementById('heart');
+const colors = ['#000000','#800000','#000080'];
+const body = document.body;
 const name = document.getElementById('name');
-const message = document.getElementById('message');
 
-heart.addEventListener('click', () => {
-  heart.style.display = 'none';
-  createHearts(200); // toplam kalp sayısı
-  showText();
-  // 15 saniyelik animasyon süresi
-  setTimeout(() => {
-    // animasyonu durdurmak veya resetlemek için
-    console.log("15 saniye tamamlandı");
-  }, 15000);
-});
+function createHeart(x, y, color, size) {
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.style.left = x + 'px';
+  heart.style.top = y + 'px';
+  heart.style.color = color;
+  heart.style.width = size + 'px';
+  heart.style.height = size + 'px';
+  heart.innerHTML = `
+    <svg viewBox="0 0 32 29.6">
+      <path d="M23.6,0c-2.9,0-5.4,1.7-6.6,4.1C15.8,1.7,13.3,0,10.4,0C4.7,0,0,4.7,0,10.4c0,11.2,16,19.2,16,19.2s16-8,16-19.2
+      C32,4.7,27.3,0,23.6,0z"/>
+    </svg>
+  `;
+  body.appendChild(heart);
+  return heart;
+}
 
-function createHearts(num) {
-  const colors = ['#000000','#800000','#000080']; // siyah, bordo, lacivert
+function animateHeart(heart, vx, vy, rotationSpeed, duration) {
+  let start = null;
+  const animate = (timestamp) => {
+    if (!start) start = timestamp;
+    let progress = timestamp - start;
+    if (progress > duration) {
+      heart.remove();
+      return;
+    }
+    const x = parseFloat(heart.style.left) + vx;
+    const y = parseFloat(heart.style.top) + vy;
+    heart.style.left = x + 'px';
+    heart.style.top = y + 'px';
+    heart.style.transform = `rotate(${rotationSpeed*progress/10}deg)`;
+    requestAnimationFrame(animate);
+  };
+  requestAnimationFrame(animate);
+}
+
+// Aşağı doğru süzülen kalpler
+function createFallingHearts(num) {
   for (let i = 0; i < num; i++) {
-    const h = document.createElement('div');
-    h.classList.add('heart-small');
-    
-    // 42: Ekranın farklı köşelerinden rastgele çıkış
-    h.style.left = Math.random() * window.innerWidth + 'px';
-    h.style.top = Math.random() * window.innerHeight + 'px';
-    
-    // boyut
-    h.style.width = (Math.random() * 20 + 10) + 'px';
-    h.style.height = (h.style.width.replace('px','')*0.9)+'px';
-    
-    // renk
-    h.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-    
-    document.body.appendChild(h);
-    animateHeart(h);
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    const size = Math.random() * 15 + 10;
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    const heart = createHeart(x, y, color, size);
+    const vx = (Math.random()-0.5)*0.5;
+    const vy = Math.random()*0.5 + 0.2;
+    animateHeart(heart, vx, vy, (Math.random()-0.5)*2, 15000);
   }
 }
 
-function animateHeart(el) {
-  let x = parseFloat(el.style.left);
-  let y = parseFloat(el.style.top);
-  let rotation = Math.random() * 360;
-  
-  // 43: Kalpler farklı hızlarda hareket
-  const dx = (Math.random() - 0.5) * (Math.random()*10+2);
-  const dy = - (Math.random() * 10 + 2); // yukarı hareket
-  const dr = (Math.random() - 0.5) * 10;
-  
-  el.style.opacity = 1;
-  const interval = setInterval(() => {
-    y += dy;
-    x += dx;
-    rotation += dr;
-    
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    el.style.transform = `rotate(${rotation}deg)`;
-    
-    // yavaş süzülen kalpler için opacity azaltma
-    el.style.opacity -= 0.015;
-    
-    if (el.style.opacity <= 0 || y < -50 || x < -50 || x > window.innerWidth+50) {
-      el.remove();
-      clearInterval(interval);
-    }
-  }, 16);
-}
+// Başlangıçta süzülen kalpler
+createFallingHearts(70);
 
-function showText() {
-  name.style.transition = 'opacity 1s';
-  message.style.transition = 'opacity 1s';
-  name.style.opacity = 1;
-  message.style.opacity = 1;
-}
+body.addEventListener('click', (e) => {
+  const clickX = e.clientX;
+  const clickY = e.clientY;
+  for (let i = 0; i < 30; i++) {
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    const size = Math.random()*15 + 10;
+    const heart = createHeart(clickX, clickY, color, size);
+    const vx = (Math.random()-0.5)*2; // sağa sola
+    const vy = - (Math.random()*3 + 2); // yukarı
+    animateHeart(heart, vx, vy, (Math.random()-0.5)*5, 3000 + Math.random()*1000);
+  }
+});
 </script>
 
 </body>
